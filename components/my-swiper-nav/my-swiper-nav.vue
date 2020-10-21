@@ -80,21 +80,21 @@
 				let query = uni.createSelectorQuery().in(this);
 				query.selectAll(".nav-bar-item").boundingClientRect()
 				query.exec((res) => {
-					console.log(res[0])
 					const center = res[0][index].width / 2 + res[0][index].left
 					this.lineTranslate = center + this.scrollWidth
-					console.log(this.lineTranslate)
 				})
 			},
-			navItemClick(item,index) {
+			//nav 点击切换事件
+			navItemClick(title,index) {
 				if(this.navData.length > this.swiperThreshold && this.scrollView){
 					this.scrollTo = 'nav' + index
 				}
 				this.currentIndex = index
 				this.getBoundMessage(index)
+				this.$emit('ItemClick',title,index)
 			},
+			// 滚动事件
 			scroll(e) {
-				console.log(e.detail.scrollLeft)
 				this.scrollWidth = e.detail.scrollLeft
 			}
 		}

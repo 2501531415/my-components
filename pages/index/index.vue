@@ -2,7 +2,7 @@
 	<view class="content1">
 		<my-swiper :swiperData="swiperData" :show="false" @itemClick="itemClick">
 		</my-swiper>
-		<my-swiper-nav :navData="navData" nav-type="card" :ellipsis="false" color="yellow"/>
+		<my-swiper-nav :nav-data="navData"  :ellipsis="false" @navItemClick="navItemClick"/>
 	</view>
 </template>
 
@@ -23,10 +23,10 @@
 
 		},
 		methods: {
-			itemClick(item,index){
+			navItemClick(item,index){
 				console.log(item)
 				console.log(index)
-			}
+			},
 		}
 	}
 </script>
