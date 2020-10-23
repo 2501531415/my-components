@@ -1,20 +1,7 @@
 <template>
 	<view class="content1">
-		<my-refresh @pullDown="pullDown" @pullUp="pullUp" :total-page="50" :current-page="currentPage" pull-down-type="dot" border-color="red">
-			<!-- <view class="tip" slot="tip">66666666666666666666</view> -->
-				<view class="list">
-					<view class="list-item" v-for="item in listData" :key="item">
-						{{item}}
-					</view>
-				</view>
-		</my-refresh>
-		<!-- <my-refresh ref="loadRefresh" :isRefresh="true" @loadMore="loadMore" @refresh="refresh" :pageNo="pageNo" :totalPageNo="20">
-			<view class="list" slot="content-list">
-				<view class="list-item" v-for="item in listData" :key="item">
-					{{item}}
-				</view>
-			</view>
-		</my-refresh> -->
+		<my-upload @beforeRead="beforeRead" @success="success" :file-list="fileList"
+		 url="http://192.168.0.149:3000/upload" :width="100" :count="5" accept="media"/>
 	</view>
 </template>
 
@@ -31,49 +18,25 @@
 				navData:['最新','福利','你好'],
 				listData:30,
 				pageNo:1,
-				currentPage:1
+				currentPage:1,
+				fileList:[]
+				
 			}
 		},
 		onLoad() {
 
 		},
 		methods: {
-			// scrolltoupper(){
-			// 	console.log('顶部')
-			// },
-			// scrolltolower(){
-			// 	console.log('底部')
-			// },
-			pullUp(callback){
-				var that =this
-				setTimeout(()=>{
-					console.log('哦呦了')
-					that.listData += 10 
-					that.currentPage += 1 
-					callback()
-				},3000)
+			beforeRead(e,callback){
+				console.log(e)
+				callback(true)
 			},
-			loadMore(callback){
-				var that =this
-				setTimeout(()=>{
-					console.log('哦呦了')
-					that.listData = 50
-					that.pageNo += 1 
-					callback()
-				},5000)
-			},
-			pullDown(callback){
-				var that = this
-				setTimeout(()=>{
-					console.log('我取到数据了')
-					that.listData = 50
-					callback()
-				},6000)
-			},
-			navItemClick(item,index){
-				console.log(item)
-				console.log(index)
-			},
+			success(file){
+				console.log(file)
+				file.forEach(item=>{
+					this.fileList.push({url:item.data.url})
+				})
+			}
 		}
 	}
 </script>
