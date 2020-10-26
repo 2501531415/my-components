@@ -1,7 +1,10 @@
 <template>
 	<view class="my-upload" :style="getWidth">
 		<view class="my-upload-fileList-item" :style="{'width':width + 'px','height':width + 'px'}" v-for="(item,index) in fileList" :key="index" v-if="(accept == 'image' && fileList.length > 0) || (accept == 'media' && mediaTypeStatus =='image')">
-			<image :src="item.url" mode=""></image>
+			<image :src="item.url" mode="" @click="imagePreview(index)"></image>
+			<view class="my-upload-image-delete" @click.stop="imageDelete(index)" v-if="deletable">
+				X
+			</view>
 		</view>
 		<view class="my-upload-video" v-if="accept == 'video' || (accept == 'media' && mediaTypeStatus =='video')" v-for="(item,index) in fileList" :key="index">
 			<video :src="item.url" controls class="my-upload-video"></video>
@@ -19,7 +22,8 @@
 		data(){
 			return {
 				limitStatus:true,
-				mediaTypeStatus:null
+				mediaTypeStatus:null,
+				fileLists:[]
 			}
 		},
 		props:{
@@ -85,6 +89,16 @@
 			mediaType:{
 				type:Array,
 				default:['image', 'video']
+			},
+			//是否在点击预览图后展示全屏图片预览
+			previewFullImage:{
+				type:Boolean,
+				default:true
+			},
+			//是否展示删除按钮
+			deletable:{
+				type:Boolean,
+				default:false
 			}
 		},
 		computed:{
@@ -100,15 +114,21 @@
 				if(this.accept == 'image'){
 					this.chooseImage().then(res=>{
 						this.beforeRead(res)
+					}).catch(err=>{
+						this.$emit('fail',err)
 					})
 				}else if(this.accept == 'video'){
 					this.chooseVideo().then(res=>{
 						this.beforeRead(res)
+					}).catch(err=>{
+						this.$emit('fail',err)
 					})
 				}else if(this.accept == 'media'){
 					this.chooseMedia().then(res=>{
 						this.mediaTypeStatus = res.type
 						this.beforeRead(res)
+					}).catch(err=>{
+						this.$emit('fail',err)
 					})
 				}
 			},
@@ -173,11 +193,9 @@
 						sizeType,
 						sourceType,
 						success:(res)=>{
-							console.log(res)
 							resolve(res)
 						},
 						fail:(err)=>{
-							console.log(res)
 							reject(err)
 						}
 					})
@@ -215,14 +233,34 @@
 					  sizeType,
 					  success:(res)=>{
 						  resolve(res)
-					    console.log(res)
 					  },
 					  fail:(err)=>{
 						  reject(err)
-						  console.log(err)
 					  }
 					})
 				})
+			},
+			//删除图片
+			imageDelete(index){
+				this.$emit('clickDelete',index)
+			},
+			//图片预览
+			imagePreview(index){
+				if(this.previewFullImage){
+					var urls = []
+					this.fileList.filter((item,indey)=> indey == index).forEach(item=>{
+						urls.push(item.url)
+					})
+					uni.previewImage({
+					   current:index,
+					   urls: urls,
+					   success:(res)=>{
+						   this.$emit('clickPreview',index)
+					   }
+					})
+				}else{
+					return;
+				}
 			}
 		}
 	}
@@ -240,17 +278,31 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		margin: 0 8px 8px 0;
 	}
 	.my-upload-fileList-item{
 		overflow: hidden;
 		margin: 0 8px 8px 0;
 		cursor: pointer;
-
+		position: relative;
 	}
 	.my-upload-fileList-item image{
 		display: block;
 		width: 100%;
 		height:100%;
+	}
+	.my-upload-image-delete{
+		width: 14px;
+		height:14px;
+		position: absolute;
+		right: 0;
+		top: 0;
+		border-bottom-left-radius: 12px;
+		background-color: rgba(0, 0, 0, 0.7);
+		font-size: 9px;
+		color: white;
+		text-align: center;
+
 	}
 	.my-upload-item:active{
 		background-color: #eee;
