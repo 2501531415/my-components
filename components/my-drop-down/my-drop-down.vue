@@ -12,13 +12,13 @@
 			</view>
 			<view class="my-drop-down-menu-list">
 					<view class="my-drop-down-menu-item" v-for="(option,indey) in listData" :key="indey" @click="menuItemClick(option,indey)">
-						<view :class="[{'my-drop-down-active':Object.values(indexObject).includes(option.value) || (valueIndex == 0 && listData[valueIndex].value == option.value)},'my-drop-down-menu-item-text']">
+						<view :class="[{'my-drop-down-active':Object.values(valueObject).includes(option.value) || (valueIndex == 0 && listData[valueIndex].value == option.value)},'my-drop-down-menu-item-text']">
 							{{option.text}}
-							<!-- {{Object.values(indexObject).includes(option.value)}}
-							{{Object.values(indexObject).length ==0}}
+							<!-- {{Object.values(valueObject).includes(option.value)}} -->
+							<!-- {{Object.values(indexObject).length ==0}}
 							{{listData[valueIndex].value == option.value}} -->
 						</view>
-						<image src="../../static/right.jpg" mode="" v-if="Object.values(indexObject).includes(option.value) || (valueIndex == 0 && listData[valueIndex].value == option.value)" class="my-drop-down-right-image"></image>
+						<image src="../../static/right.jpg" mode="" v-if="Object.values(valueObject).includes(option.value) || (valueIndex == 0 && listData[valueIndex].value == option.value)" class="my-drop-down-right-image"></image>
 					</view>
 			</view>
 		</view>
@@ -60,7 +60,14 @@
 					this.currentIndex = null
 					this.dropStaus = !this.dropStaus
 				}else{
-					this.valueIndex = 0
+					
+					var data = index.toString()
+					console.log(Object.keys(this.valueObject).includes(data))
+					if(!Object.keys(this.valueObject).includes(data)){
+						this.valueIndex = 0
+					}else{
+						this.valueIndex = null
+					}
 					this.currentIndex = index
 					this.listData = item
 					this.dropStaus = true
@@ -73,17 +80,17 @@
 			menuItemClick(option,index){
 				// titleObject.()
 				delete this.valueObject[this.value]
-				delete this.titleObject[this.value]
+				delete this.titleObject[this.currentIndex]
 				delete this.indexObject[this.currentIndex]
 				this.value = option.value,
 				this.valueIndex = index
-				this.valueObject[option.value] = option.value
-				this.titleObject[option.value] = option.text
+				this.valueObject[this.currentIndex] = option.value
+				this.titleObject[this.currentIndex] = option.text
 				this.indexObject[this.currentIndex] = index
-				// this.title = option.text
-				console.log(this.valueObject)
 				console.log(this.titleObject)
-				console.log(this.indexObject)
+				console.log(this.valueObject)
+				this.currentIndex = null
+				this.dropStaus = false
 			}
 		}
 	}

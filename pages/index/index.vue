@@ -51,6 +51,11 @@
 					      { text: '好评排序', value: 'b' },
 					      { text: '销量排序', value: 'c' },
 					],
+					[
+					      { text: '默认排序', value: '3' },
+					      { text: '好评排序', value: '4' },
+					      { text: '销量排序', value: '5' },
+					],
 				]
 			}
 		},
