@@ -1,5 +1,5 @@
 <template>
-	<view :style="{'background-color':bgc,'width':getWidth + 'px'}" :class="[{'my-nav-bar-border':border},'my-nav-bar']">
+	<view :style="{'background-color':bgc}" :class="[{'my-nav-bar-border':border},'my-nav-bar']">
 		<view class="my-nav-bar-left" @click="leftClick">
 			<slot name="left">
 				<image src="../../static/iconleft.png" mode="" v-if="leftAllow"></image>
@@ -44,13 +44,6 @@
 				type:Boolean,
 				default:false
 			}
-		},
-		computed:{
-			getWidth() {
-				let width = uni.getSystemInfoSync().windowWidth
-				console.log(width)
-				return width
-			},
 		},
 		methods:{
 			leftClick(){

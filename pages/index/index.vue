@@ -18,12 +18,15 @@
 				右边
 			</view>
 		</my-nav-bar> -->
-		<my-tab-bar :tabBar="tabBar" @change="change"/>
+		<!-- <my-tab-bar :tabBar="tabBar" @change="change"/> -->
+		<my-drop-down :options="options"/>
 	</view>
 </template>
 
 <script>
+	import tabBarMixins from '@/config/tabBar'
 	export default {
+		mixins:[tabBarMixins],
 		data() {
 			return {
 				title: 'Hello',
@@ -37,40 +40,22 @@
 				pageNo:1,
 				currentPage:1,
 				fileList:[],
-				tabBar: {
-					color:"#444444",
-					selectedColor: "#f77d8b",
-					borderStyle: "#eee",
-					backgroundColor: "#ffffff",
-					list: [
-						{
-							"pagePath": "pages/index/index",
-							"iconPath": "../../static/img/tabbar/tag-0.png",
-							"selectedIconPath": "../../static/img/tabbar/tag-1.png",
-							"text": "首页",
-							badge:'99'
-						},
-						{
-							"pagePath": "pages/live/live",
-							"iconPath": "../../static/img/tabbar/hot-0.png",
-							"selectedIconPath": "../../static/img/tabbar/hot-1.png",
-							"text": "直播",
-							badge:'100'
-						},
-						{
-							"pagePath": "pages/profile/profile",
-							"iconPath": "../../static/img/tabbar/me.png",
-							"selectedIconPath": "../../static/img/tabbar/meactive.png",
-							"text": "我的"
-						}
-					]
-				
-				},
-				
+				options:[
+					[
+					      { text: '全部商品', value: 0 },
+					      { text: '新款商品', value: 1 },
+					      { text: '活动商品', value: 2 },
+					],
+					[
+					      { text: '默认排序', value: 'a' },
+					      { text: '好评排序', value: 'b' },
+					      { text: '销量排序', value: 'c' },
+					],
+				]
 			}
 		},
 		onLoad() {
-
+			// console.log(tabBar)
 		},
 		methods: {
 			// beforeRead(e,callback){
@@ -110,7 +95,5 @@
 </script>
 
 <style>
-	.content1{
-		display: flex;
-	}
+
 </style>
