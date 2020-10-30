@@ -11,7 +11,13 @@
 				</view>
 		</my-refresh> -->
 		<!-- <my-tab-bar :tabBar="tabBar" @change="change"/> -->
-		<my-drop-down-select :options="options" active-color="green" topAllow="green" @change="change" ref="test" />
+		<!-- <my-drop-down-select :options="options" active-color="green" topAllow="green" @change="change" ref="test" /> -->
+		<view class="item">
+			<view class="title">
+				时间选择
+			</view>
+			<my-time-picker :endYear="2060" time-type="all" @submit="submit"/>
+		</view>
 	</view>
 </template>
 
@@ -78,15 +84,45 @@
 					],
 					[{
 							text: '默认排序',
-							value: 'a'
+							value: 'a',
+							children: [{
+									text: '111'
+								},
+								{
+									text: '222'
+								},
+								{
+									text: '333'
+								}
+							]
 						},
 						{
 							text: '好评排序',
-							value: 'b'
+							value: 'b',
+							children: [{
+									text: '444'
+								},
+								{
+									text: '555'
+								},
+								{
+									text: '666'
+								}
+							]
 						},
 						{
 							text: '销量排序',
-							value: 'c'
+							value: 'c',
+							children: [{
+									text: '777'
+								},
+								{
+									text: '888'
+								},
+								{
+									text: '999'
+								}
+							]
 						},
 					],
 				]
@@ -128,11 +164,17 @@
 			change(e) {
 				console.log(e)
 				console.log(this.$refs.test)
+			},
+			submit(time){
+				console.log(time)
 			}
 		}
 	}
 </script>
 
 <style>
-
+.item{
+	display: flex;
+	
+}
 </style>

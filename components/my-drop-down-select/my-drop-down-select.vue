@@ -27,13 +27,15 @@
 							</view>
 					</view>
 					<view class="my-drop-down-menu-right" v-if="childrenOption.length > 0">
-						<view class="my-drop-down-right-item" v-for="(option,indey) in childrenOption" :key="indey" @click="rightItemClick(option,indey)">
+						<view class="my-drop-down-right-item" :style="{color:Object.keys(resultObject).includes(currentIndex + '') && resultObject[currentIndex] == indey?activeColor:''}" v-for="(option,indey) in childrenOption" :key="indey" @click="rightItemClick(option,indey)">
 							{{option.text}}
+							{{Object.keys(resultObject).includes(currentIndex)}}
+							<!-- {{Object.values(resultObject).includes(option.text)}} -->
 						</view>
 					</view>
-					<view class="my-drop-down-menu-right" v-else>
-						<view class="my-drop-down-right-item" v-for="(option,indey) in listData[valueIndex].children" :key="indey">
-							{{option.text}}
+					<view class="my-drop-down-menu-right" v-else-if="listData[valueIndex].children.length > 0">
+						<view class="my-drop-down-right-item" :style="{color:Object.keys(resultObject).includes(currentIndex + '') &&resultObject[currentIndex] == indey?activeColor:''}"  v-for="(option,indey) in listData[valueIndex].children" :key="indey" @click="rightItemClick(option,indey)">
+							<text>{{option.text}}</text>
 						</view>
 					</view>
 				</view>
@@ -59,8 +61,10 @@
 				valueObject: {},
 				titleObject: {},
 				indexObject: {},
+				resultObject:{},
 				value: 0,
 				valueIndex: 0,
+				rightIndex:0,
 				top:null
 			}
 		},
@@ -133,16 +137,18 @@
 					this.currentIndex = null
 					this.dropStaus = !this.dropStaus
 				} else {
+					this.childrenOption = []
 					var data = index.toString()
 					if (!Object.keys(this.valueObject).includes(data)) {
 						this.valueIndex = 0
 					} else {
-						this.valueIndex = null
+						this.valueIndex = this.indexObject[index]
 					}
 					this.currentIndex = index
 					this.listData = item
 					this.dropStaus = true
 				}
+				console.log(this.valueIndex)
 			},
 			//点击遮罩
 			overlay() {
@@ -172,8 +178,16 @@
 				})
 			},
 			rightItemClick(option,indey){
-				
-			}
+			    console.log(option)
+				this.rightIndex = indey
+				// console.log(this.valueObject[this.currentIndex]?1:0)
+			    // delete this.resultObject[this.currentIndex]
+				// const valueData = this.valueObject[this.currentIndex]?this.valueObject[this.currentIndex]:0
+			    this.resultObject[this.currentIndex] = indey
+				console.log(this.resultObject)
+				console.log(Object.keys(this.resultObject))
+				console.log(Object.keys(this.resultObject).includes(this.currentIndex.toString()))
+			   }
 		}
 	}
 </script>
