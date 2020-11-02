@@ -12,12 +12,13 @@
 		</my-refresh> -->
 		<!-- <my-tab-bar :tabBar="tabBar" @change="change"/> -->
 		<!-- <my-drop-down-select :options="options" active-color="green" topAllow="green" @change="change" ref="test" /> -->
-		<view class="item">
+		<!-- <view class="item">
 			<view class="title">
 				时间选择
 			</view>
-			<my-time-picker :endYear="2060" time-type="all" @submit="submit"/>
-		</view>
+			<my-time-picker :endYear="2060" time-type="normal" @submit="submit"/>
+		</view> -->
+		<my-place-picker initPlace="蓟州区"/>
 	</view>
 </template>
 
