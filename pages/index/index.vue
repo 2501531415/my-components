@@ -18,7 +18,11 @@
 			</view>
 			<my-time-picker :endYear="2060" time-type="normal" @submit="submit"/>
 		</view> -->
-		<my-place-picker initPlace="蓟州区"/>
+		<!-- <my-place-picker initPlace="蓟州区"/> -->
+		<view class="test" v-for="item in 100" :key="item">
+			{{item}}
+		</view>
+		<my-back-top :show="show" @backTop="backTop"/>
 	</view>
 </template>
 
@@ -29,6 +33,7 @@
 		data() {
 			return {
 				title: 'Hello',
+				show:false,
 				swiperData: [
 					'http://192.168.0.149:3000/public/img/55.jpg',
 					'http://192.168.0.149:3000/public/img/10.jpg',
@@ -132,6 +137,13 @@
 		onLoad() {
 			// console.log(tabBar)
 		},
+		onPageScroll(e) {
+			if (e.scrollTop > 500) {
+				this.show = true
+			} else {
+				this.show = false
+			}
+		},
 		methods: {
 			// beforeRead(e,callback){
 			// 	console.log(e)
@@ -168,6 +180,12 @@
 			},
 			submit(time){
 				console.log(time)
+			},
+			backTop(){
+				uni.pageScrollTo({
+				    scrollTop: 0,
+				    duration: 300
+				});
 			}
 		}
 	}
