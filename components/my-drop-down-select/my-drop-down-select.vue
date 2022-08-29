@@ -11,13 +11,37 @@
 			<view class="my-drop-down-menu-overlay" @click="overlay" v-if="overlayStatus">
 			</view>
 			<view class="my-drop-down-menu-list" :style="{'background-color':listBgc}">
-				<view class="my-drop-down-menu-item" v-for="(option,indey) in listData" :key="indey" @click="menuItemClick(option,indey)">
+				<!-- <view class="my-drop-down-menu-item" v-for="(option,indey) in listData" :key="indey" @click="menuItemClick(option,indey)">
 					<view :style="{color:(Object.values(valueObject).includes(option.value) || (valueIndex == 0 && listData[valueIndex].value == option.value)?activeColor:'')}"
 					 class="my-drop-down-menu-item-text">
 						{{option.text}}
 					</view>
 					<image src="../../static/right.jpg" mode="" v-if="Object.values(valueObject).includes(option.value) || (valueIndex == 0 && listData[valueIndex].value == option.value)"
 					 class="my-drop-down-right-image"></image>
+				</view> -->
+				<view class="my-drop-down-menu-list-center">
+					<view class="my-drop-down-menu-left">
+							<view v-for="(option,indez) in listData" :key="indez" :style="{color:(Object.values(valueObject).includes(option.value) || (valueIndex == 0 && listData[valueIndex].value == option.value)?activeColor:'')}"
+							class="my-drop-down-left-item" @click="leftItemClick(option,indez)">
+								{{option.text}}
+							</view>
+					</view>
+					<view class="my-drop-down-menu-right" v-if="childrenOption.length > 0">
+						<view class="my-drop-down-right-item" :style="{color:Object.keys(resultObject).includes(currentIndex + '') && resultObject[currentIndex] == indey?activeColor:''}" v-for="(option,indey) in childrenOption" :key="indey" @click="rightItemClick(option,indey)">
+							{{option.text}}
+							{{Object.keys(resultObject).includes(currentIndex)}}
+							<!-- {{Object.values(resultObject).includes(option.text)}} -->
+						</view>
+					</view>
+					<view class="my-drop-down-menu-right" v-else-if="listData[valueIndex].children.length > 0">
+						<view class="my-drop-down-right-item" :style="{color:Object.keys(resultObject).includes(currentIndex + '') &&resultObject[currentIndex] == indey?activeColor:''}"  v-for="(option,indey) in listData[valueIndex].children" :key="indey" @click="rightItemClick(option,indey)">
+							<text>{{option.text}}</text>
+						</view>
+					</view>
+				</view>
+				<view class="my-drop-down-menu-list-button">
+					<button type="default">重置</button>
+					<button type="primary">完成</button>
 				</view>
 			</view>
 		</view>
@@ -31,13 +55,16 @@
 			return {
 				title: null,
 				listData: [],
+				childrenOption:[],
 				currentIndex: null,
 				dropStaus: false,
 				valueObject: {},
 				titleObject: {},
 				indexObject: {},
+				resultObject:{},
 				value: 0,
 				valueIndex: 0,
+				rightIndex:0,
 				top:null
 			}
 		},
@@ -45,6 +72,10 @@
 			this.value = this.valueFirst
 		},
 		props: {
+			dropType:{
+				type:String,
+				default:'normal'
+			},
 			//初次显示的value
 			valueFirst: {
 				type: Number | String,
@@ -106,16 +137,18 @@
 					this.currentIndex = null
 					this.dropStaus = !this.dropStaus
 				} else {
+					this.childrenOption = []
 					var data = index.toString()
 					if (!Object.keys(this.valueObject).includes(data)) {
 						this.valueIndex = 0
 					} else {
-						this.valueIndex = null
+						this.valueIndex = this.indexObject[index]
 					}
 					this.currentIndex = index
 					this.listData = item
 					this.dropStaus = true
 				}
+				console.log(this.valueIndex)
 			},
 			//点击遮罩
 			overlay() {
@@ -127,9 +160,8 @@
 					return
 				}
 			},
-			//子项菜单切换
-			menuItemClick(option, index) {
-				// titleObject.()
+			leftItemClick(option,index){
+				this.childrenOption = option.children
 				delete this.valueObject[this.value]
 				delete this.titleObject[this.currentIndex]
 				delete this.indexObject[this.currentIndex]
@@ -144,11 +176,18 @@
 					detail: option.text,
 					value: option.value
 				})
-				if (this.closeOnChoose) {
-					this.currentIndex = null
-					this.dropStaus = false
-				}
-			}
+			},
+			rightItemClick(option,indey){
+			    console.log(option)
+				this.rightIndex = indey
+				// console.log(this.valueObject[this.currentIndex]?1:0)
+			    // delete this.resultObject[this.currentIndex]
+				// const valueData = this.valueObject[this.currentIndex]?this.valueObject[this.currentIndex]:0
+			    this.resultObject[this.currentIndex] = indey
+				console.log(this.resultObject)
+				console.log(Object.keys(this.resultObject))
+				console.log(Object.keys(this.resultObject).includes(this.currentIndex.toString()))
+			   }
 		}
 	}
 </script>
@@ -204,7 +243,9 @@
 		z-index: 1000;
 		width: 100%;
 	}
-
+	/* .my-drop-down-menu-list-select{
+		display: flex;
+	} */
 	@keyframes show {
 		0% {
 			opacity: 0;
@@ -230,6 +271,33 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 0px 10px;
+	}
+	.my-drop-down-menu-list-center{
+		display: flex;
+	}
+	.my-drop-down-menu-list-button{
+		display: flex;
+	}
+	.my-drop-down-menu-list-button button:first-child{
+		flex: 1;
+		border-radius: 0;
+	}
+	.my-drop-down-menu-list-button button:last-child{
+		flex: 2;
+		border-radius: 0;
+	}
+	.my-drop-down-menu-left{
+		flex: 1;
+		/* background-color: red; */
+	}
+	.my-drop-down-left-item,.my-drop-down-right-item{
+		background-color: #f7f8fa;
+		font-size: 14px;
+		padding: 0px 10px;
+	}
+	.my-drop-down-menu-right{
+		flex: 1;
+		background-color: yellow;
 	}
 
 	.my-drop-down-active {
