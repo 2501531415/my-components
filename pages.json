@@ -1,13 +1,42 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/index3",
+			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
-				
+				"navigationBarTitleText": "首页"
 			}
-		}
-    ],
+		},
+    {
+    	"path": "pages/echart/index",
+    	"style": {
+    		"navigationBarTitleText": "图表"
+    	}
+    },
+    {
+    	"path": "pages/echart/exmaple/map",
+    	"style": {
+    		"navigationBarTitleText": "中国地图"
+    	}
+    },
+    {
+    	"path": "pages/echart/exmaple/bar",
+    	"style": {
+    		"navigationBarTitleText": "柱状图"
+    	}
+    },
+    {
+    	"path": "pages/echart/exmaple/line",
+    	"style": {
+    		"navigationBarTitleText": "折线图"
+    	}
+    },
+    {
+    	"path": "pages/echart/exmaple/pie",
+    	"style": {
+    		"navigationBarTitleText": "饼图"
+    	}
+    }
+  ],
 	"easycom": {
 	  "autoscan": true,
 	  "custom":{
