@@ -2,7 +2,7 @@
 	<view>
 		<swiper :style="{'height':swiperHeight+'px'}" class="my-swiper" @touchstart="start" @touchend="end" :current="currentTab" duration="300" @change="swiperTab">
 			<swiper-item v-for="(item,index) in swiperData" :key="index">
-				<image :src="swiperData[index]" mode="widthFix" class="my-swiper-image" :class="[status && index !=currentTab?'imgOver':'']" @click="imagePreView(swiperData,index)"></image>
+				<image :src="swiperData[index]" mode="widthFix" class="my-swiper-image" :class="[status && index !=currentTab?'imgOver':'']" @click="imagePreView(swiperData,index)" @load="imageLoad(index)"></image>
 			</swiper-item>
 		</swiper>
 		<view class="my-swiper-bottom-detail" :style="{'top':swiperHeight-76 +'px'}">
@@ -13,14 +13,16 @@
 					</view>
 					<text class="my-number-title">{{currentTab+1}}/{{swiperData.length}}</text>
 				</view>
-				<view class="my-message-bottom">
-					<view class="like">
-						{{likeNumber}}赞
-					</view>
-					<view class="read-number">
-						{{readNumber}}阅读
-					</view>
-				</view>
+				<slot>
+          <view class="my-message-bottom">
+          	<view class="like">
+          		{{likeNumber}}赞
+          	</view>
+          	<view class="read-number">
+          		{{readNumber}}阅读
+          	</view>
+          </view>
+        </slot>
 			</view>
 			<slot v-else-if="useSlot"></slot>
 		</view>
@@ -33,12 +35,7 @@
 				return {
 					currentTab: 0,
 					swiperHeight:'',
-					status:false,
-					data:[
-						{url:'../../static/lunbotu1.png'},
-						{url:'../../static/lunbotu3.jpg'},
-						{url:'../../static/lunbotu4.jpg'},
-					]
+					status:false
 				}
 			},
 			props:{
@@ -63,12 +60,12 @@
 					default:true
 				}
 			},
-			mounted() {
-				setTimeout(()=>{
-					this.setSwiperHeight()
-				},100)
-			},
 			methods: {
+        imageLoad(index){
+          if(this.currentTab == index){
+            this.setSwiperHeight()
+          }
+        },
 				swiperTab(e){
 					this.currentTab = e.target.current;
 					setTimeout(()=>{

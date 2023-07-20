@@ -1,8 +1,8 @@
 <template>
-  <canvas type="2d" v-if="isUseNewCanvas" class="ty-canvas" :canvas-id="canvasId" @init="init" @touchstart="touchStart"
+  <canvas type="2d" v-if="isUseNewCanvas" class="my-canvas" :canvas-id="canvasId" @init="init" @touchstart="touchStart"
     @touchmove="touchMove" @touchend="touchEnd">
   </canvas>
-  <canvas v-else class="ty-canvas" :canvas-id="canvasId" @init="init" @touchstart="touchStart" @touchmove="touchMove"
+  <canvas v-else class="my-canvas" :canvas-id="canvasId" @init="init" @touchstart="touchStart" @touchmove="touchMove"
     @touchend="touchEnd">
   </canvas>
 </template>
@@ -28,7 +28,7 @@
       canvasId: {
         type: String,
         default: () => {
-          return "ty-canvas";
+          return "my-canvas";
         }
       },
       setOptions: {
@@ -62,8 +62,8 @@
     onReady: function() {
       if (!this.setOptions) {
         console.warn(
-          '组件需绑定 setOptions 变量，例：<ty-canvas id="mychart-dom-bar" ' +
-          'canvas-id="mychart-bar" setOptions="{{ setOptions }}"></ty-canvas>'
+          '组件需绑定 setOptions 变量，例：<my-canvas id="mychart-dom-bar" ' +
+          'canvas-id="mychart-bar" setOptions="{{ setOptions }}"></my-canvas>'
         );
         return;
       }
@@ -138,7 +138,7 @@
         const canvasDpr = 1;
         var query = wx.createSelectorQuery().in(this);
         query
-          .select(".ty-canvas")
+          .select(".my-canvas")
           .boundingClientRect(res => {
             if (typeof callback === "function") {
               that.$curChart = callback(canvas, res.width, res.height, canvasDpr);
@@ -160,7 +160,7 @@
         // version >= 2.9.0：使用新的方式初始化
         const query = wx.createSelectorQuery().in(this);
         query
-          .select(".ty-canvas")
+          .select(".my-canvas")
           .fields({
             node: true,
             size: true
@@ -210,7 +210,7 @@
           // 新版
           const query = wx.createSelectorQuery().in(this);
           query
-            .select(".ty-canvas")
+            .select(".my-canvas")
             .fields({
               node: true,
               size: true
@@ -318,7 +318,7 @@
 </script>
 
 <style lang="scss">
-  .ty-canvas {
+  .my-canvas {
     width: 100%;
     height: 100%;
     display: block;

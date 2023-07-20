@@ -5,36 +5,62 @@
 			"style": {
 				"navigationBarTitleText": "首页"
 			}
-		},
+		}
+    
+  ],
+  "subPackages":[
     {
-    	"path": "pages/echart/index",
-    	"style": {
-    		"navigationBarTitleText": "图表"
-    	}
-    },
-    {
-    	"path": "pages/echart/exmaple/map",
-    	"style": {
-    		"navigationBarTitleText": "中国地图"
-    	}
-    },
-    {
-    	"path": "pages/echart/exmaple/bar",
-    	"style": {
-    		"navigationBarTitleText": "柱状图"
-    	}
-    },
-    {
-    	"path": "pages/echart/exmaple/line",
-    	"style": {
-    		"navigationBarTitleText": "折线图"
-    	}
-    },
-    {
-    	"path": "pages/echart/exmaple/pie",
-    	"style": {
-    		"navigationBarTitleText": "饼图"
-    	}
+      "root":"pageComponent",
+      "pages":[
+        {
+          "path":"cropper/index",
+          "style":{
+            "navigationBarTitleText":"头像裁剪"
+          }
+        },
+        {
+        	"path": "echart/index",
+        	"style": {
+        		"navigationBarTitleText": "图表"
+        	}
+        },
+        {
+        	"path": "echart/exmaple/map",
+        	"style": {
+        		"navigationBarTitleText": "中国地图"
+        	}
+        },
+        {
+        	"path": "echart/exmaple/bar",
+        	"style": {
+        		"navigationBarTitleText": "柱状图"
+        	}
+        },
+        {
+        	"path": "echart/exmaple/line",
+        	"style": {
+        		"navigationBarTitleText": "折线图"
+        	}
+        },
+        {
+        	"path": "echart/exmaple/pie",
+        	"style": {
+        		"navigationBarTitleText": "饼图"
+        	}
+        },
+        {
+        	"path": "echart/exmaple/radar",
+        	"style": {
+        		"navigationBarTitleText": "雷达图"
+        	}
+        },
+        {
+          "path":"swiper/index",
+          "style":{
+            "navigationBarTitleText":"轮播"
+          }
+        }
+      ]
     }
   ],
 	"easycom": {

@@ -21,7 +21,11 @@
             <text>饼图</text>
         </view>
       </my-grid-item>
-      <my-grid-item>777</my-grid-item>
+      <my-grid-item :index="4">
+        <view class="title">
+            <text>雷达图</text>
+        </view>
+      </my-grid-item>
     </my-grid>
   </view>
 </template>
@@ -33,19 +37,24 @@
         console.log(e)
         if(e.detail.index == 0){
           uni.navigateTo({
-            url:'/pages/echart/exmaple/map'
+            url:'/pageComponent/echart/exmaple/map'
           })
         }else if(e.detail.index == 1){
           uni.navigateTo({
-            url:'/pages/echart/exmaple/bar'
+            url:'/pageComponent/echart/exmaple/bar'
           })
         }else if(e.detail.index == 2){
           uni.navigateTo({
-            url:'/pages/echart/exmaple/line'
+            url:'/pageComponent/echart/exmaple/line'
           })
         }else if(e.detail.index == 3){
           uni.navigateTo({
-            url:'/pages/echart/exmaple/pie'
+            url:'/pageComponent/echart/exmaple/pie'
+          })
+        }
+        else if(e.detail.index == 4){
+          uni.navigateTo({
+            url:'/pageComponent/echart/exmaple/radar'
           })
         }
       }
