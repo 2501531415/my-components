@@ -3,11 +3,11 @@
   <view class="container">
     <view class='cropper-content' v-if="isShowImg">
       <view class="my-cropper"
-        :style="'width:'+cropperInitW+'px;height:'+cropperInitH+'px;background:#000'">
+        :style="'width:'+cropperInitW+'px;height:'+cropperInitH+';background:#000'">
         <view class="my-cropper-content"
           :style="'width:'+cropperW+'px;height:'+cropperH+'px;left:'+cropperL+'px;top:'+cropperT+'px'">
-          <image :src="src" :style="'width:'+cropperW+'px;height:'+cropperH+'px'"></image>
-          <view class="my-cropper-crop-box" @touchstart.stop="contentStartMove" @touchmove.stop="contentMoveing"
+          <image :src="src" :style="'width:'+cropperW+'px;height:'+cropperH+'px'" @load="load"></image>
+          <view v-if="isShowCropper" class="my-cropper-crop-box" @touchstart.stop="contentStartMove" @touchmove.stop="contentMoveing"
             @touchend.stop="contentTouchEnd"
             :style="'left:'+cutL+'px;top:'+cutT+'px;right:'+cutR+'px;bottom:'+cutB+'px'">
             <view class="my-cropper-view-box">
@@ -37,9 +37,21 @@
             </view>
           </view>
         </view>
+        <slot name="operate">
+          <view class="my-cropper-operate">
+            <view class="my-cropper-operate-item" @click="cancel">
+              <text>取消</text>
+            </view>
+            <view :class="[{'my-cropper-operate-item__disabled':!canRevert},'my-cropper-operate-item']" @click="revert">
+              <text>还原</text>
+            </view>
+            <view class="my-cropper-operate-item" @click="confirm">
+              <text>确定</text>
+            </view>
+          </view>
+        </slot>
       </view>
     </view>
-    <button @click="getImageInfo">获取图片</button>
     <canvas canvas-id="myCanvas" :style="'position:absolute;border: 1px solid red; width:'+imageW+'px;height:'+imageH+'px;top:-9999px;left:-9999px;'"></canvas>
   </view>
 </template>
@@ -47,6 +59,7 @@
 <script>
   let sysInfo = uni.getSystemInfoSync();
   let SCREEN_WIDTH = sysInfo.screenWidth
+  let SCREEN_HEIGHT = sysInfo.screenHeight
   let PAGE_X, // 手按下的x位置
     PAGE_Y, // 手按下y的位置
     PR = sysInfo.pixelRatio, // dpi
@@ -76,10 +89,11 @@
     data() {
       return {
         isShowImg:false,
+        isShowCropper:false,
         imgSrc:"",
         // 初始化的宽高
         cropperInitW: SCREEN_WIDTH,
-        cropperInitH: SCREEN_WIDTH,
+        cropperInitH: '100vh',
         // 动态的宽高
         cropperW: SCREEN_WIDTH,
         cropperH: SCREEN_WIDTH,
@@ -102,6 +116,7 @@
         cutR: '100%',
         qualityWidth: DRAW_IMAGE_W,
         innerAspectRadio: DRAFG_MOVE_RATIO,
+        canRevert:false,//还原操作
       }
     },
     mounted() {
@@ -114,6 +129,9 @@
       		that.$set(that.$data, key, obj[key])
       
       	});
+      },
+      load(){
+        this.isShowCropper = true
       },
       getImageDetail() {
         var _this = this
@@ -143,7 +161,7 @@
                 cropperH: SCREEN_WIDTH / IMG_RATIO,
                 // 初始化left right
                 cropperL: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH) / 2),
-                cropperT: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH / IMG_RATIO) / 2),
+                cropperT: SCREEN_HEIGHT / 2,
                 cutL: cutL,
                 cutT: cutT,
                 cutR: cutR,
@@ -165,7 +183,7 @@
                 cropperH: SCREEN_WIDTH,
                 // 初始化left right
                 cropperL: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH * IMG_RATIO) / 2),
-                cropperT: Math.ceil((SCREEN_WIDTH - SCREEN_WIDTH) / 2),
+                cropperT: SCREEN_HEIGHT / 2,
 
                 cutL: cutL,
                 cutT: cutT,
@@ -188,6 +206,7 @@
       contentStartMove(e) {
         PAGE_X = e.touches[0].pageX
         PAGE_Y = e.touches[0].pageY
+        this.canRevert = true
       },
 
       // 拖动时候触发的touchMove事件
@@ -248,11 +267,7 @@
             quality: 0.5,
             canvasId: 'myCanvas',
             success: function(res) {
-              console.log(res)
-              uni.previewImage({
-                current:res.tempFilePath, // 当前显示图片的http链接
-                urls: [res.tempFilePath] // 需要预览的图片http链接列表
-              })
+              _this.$emit('confirm',res.tempFilePath)
             },
             complete:function(){
               uni.hideLoading()
@@ -268,6 +283,7 @@
         CUT_R = this.cutR
         CUT_B = this.cutB
         CUT_T = this.cutT
+        this.canRevert = true
       },
 
       // 设置大小的时候触发的touchMove事件
@@ -322,14 +338,25 @@
           default:
             break;
         }
+      },
+      // 取消
+      cancel(){
+        this.$emit("cancel")
+      },
+      //还原
+      revert(){
+        this.canRevert = false
+        this.getImageDetail()
+      },
+      confirm(){
+        this.getImageInfo()
       }
     }
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .cropper-content {
-    min-height: 750upx;
     width: 100%;
   }
 
@@ -347,6 +374,7 @@
 
   .my-cropper-content {
     position: relative;
+    transform: translate(0, -60%);
   }
 
   .my-cropper-content image {
@@ -388,7 +416,7 @@
     width: 100%;
     height: 100%;
     overflow: visible;
-    outline: 1upx solid #69f;
+    outline: 1rpx solid #69f;
     outline-color: rgba(102, 153, 255, .75)
   }
 
@@ -400,8 +428,8 @@
     left: 0;
     width: 100%;
     height: 33.33333333%;
-    border-top: 1upx dashed rgba(255, 255, 255, 0.5);
-    border-bottom: 1upx dashed rgba(255, 255, 255, 0.5);
+    border-top: 1rpx dashed rgba(255, 255, 255, 0.5);
+    border-bottom: 1rpx dashed rgba(255, 255, 255, 0.5);
   }
 
   /* 纵向虚线 */
@@ -412,8 +440,8 @@
     top: 0;
     width: 33.33333333%;
     height: 100%;
-    border-left: 1upx dashed rgba(255, 255, 255, 0.5);
-    border-right: 1upx dashed rgba(255, 255, 255, 0.5);
+    border-left: 1rpx dashed rgba(255, 255, 255, 0.5);
+    border-right: 1rpx dashed rgba(255, 255, 255, 0.5);
   }
 
   /* 四个方向的线  为了之后的拖动事件*/
@@ -425,7 +453,7 @@
     background-color: #69f;
     top: 0;
     left: 0;
-    height: 1upx;
+    height: 1rpx;
     opacity: 0.1;
     cursor: n-resize;
   }
@@ -434,12 +462,12 @@
     content: '';
     position: absolute;
     top: 50%;
-    right: 0upx;
+    right: 0rpx;
     width: 100%;
     -webkit-transform: translate3d(0, -50%, 0);
     transform: translate3d(0, -50%, 0);
     bottom: 0;
-    height: 41upx;
+    height: 41rpx;
     background: transparent;
     z-index: 11;
   }
@@ -449,8 +477,8 @@
     display: block;
     background-color: #69f;
     top: 0;
-    right: 0upx;
-    width: 1upx;
+    right: 0rpx;
+    width: 1rpx;
     opacity: 0.1;
     height: 100%;
     cursor: e-resize;
@@ -461,7 +489,7 @@
     position: absolute;
     top: 0;
     left: 50%;
-    width: 41upx;
+    width: 41rpx;
     -webkit-transform: translate3d(-50%, 0, 0);
     transform: translate3d(-50%, 0, 0);
     bottom: 0;
@@ -477,7 +505,7 @@
     background-color: #69f;
     bottom: 0;
     left: 0;
-    height: 1upx;
+    height: 1rpx;
     opacity: 0.1;
     cursor: s-resize;
   }
@@ -486,12 +514,12 @@
     content: '';
     position: absolute;
     top: 50%;
-    right: 0upx;
+    right: 0rpx;
     width: 100%;
     -webkit-transform: translate3d(0, -50%, 0);
     transform: translate3d(0, -50%, 0);
     bottom: 0;
-    height: 41upx;
+    height: 41rpx;
     background: transparent;
     z-index: 11;
   }
@@ -502,7 +530,7 @@
     background-color: #69f;
     top: 0;
     left: 0;
-    width: 1upx;
+    width: 1rpx;
     opacity: 0.1;
     height: 100%;
     cursor: w-resize;
@@ -513,7 +541,7 @@
     position: absolute;
     top: 0;
     left: 50%;
-    width: 41upx;
+    width: 41rpx;
     -webkit-transform: translate3d(-50%, 0, 0);
     transform: translate3d(-50%, 0, 0);
     bottom: 0;
@@ -523,8 +551,8 @@
   }
 
   .my-cropper-point {
-    width: 5upx;
-    height: 5upx;
+    width: 5rpx;
+    height: 5rpx;
     background-color: #69f;
     opacity: .75;
     position: absolute;
@@ -532,24 +560,24 @@
   }
 
   .point-t {
-    top: -3upx;
+    top: -3rpx;
     left: 50%;
-    margin-left: -3upx;
+    margin-left: -3rpx;
     cursor: n-resize;
   }
 
   .point-tr {
-    top: -3upx;
+    top: -3rpx;
     left: 100%;
-    margin-left: -3upx;
+    margin-left: -3rpx;
     cursor: n-resize;
   }
 
   .point-r {
     top: 50%;
     left: 100%;
-    margin-left: -3upx;
-    margin-top: -3upx;
+    margin-left: -3rpx;
+    margin-top: -3rpx;
     cursor: n-resize;
   }
 
@@ -559,8 +587,8 @@
     -webkit-transform: translate3d(-50%, -50%, 0);
     transform: translate3d(-50%, -50%, 0);
     cursor: n-resize;
-    width: 36upx;
-    height: 36upx;
+    width: 36rpx;
+    height: 36rpx;
     background-color: #69f;
     position: absolute;
     z-index: 1112;
@@ -570,32 +598,32 @@
   .point-b {
     left: 50%;
     top: 100%;
-    margin-left: -3upx;
-    margin-top: -3upx;
+    margin-left: -3rpx;
+    margin-top: -3rpx;
     cursor: n-resize;
   }
 
   .point-bl {
     left: 0%;
     top: 100%;
-    margin-left: -3upx;
-    margin-top: -3upx;
+    margin-left: -3rpx;
+    margin-top: -3rpx;
     cursor: n-resize;
   }
 
   .point-l {
     left: 0%;
     top: 50%;
-    margin-left: -3upx;
-    margin-top: -3upx;
+    margin-left: -3rpx;
+    margin-top: -3rpx;
     cursor: n-resize;
   }
 
   .point-lt {
     left: 0%;
     top: 0%;
-    margin-left: -3upx;
-    margin-top: -3upx;
+    margin-left: -3rpx;
+    margin-top: -3rpx;
     cursor: n-resize;
   }
 
@@ -611,5 +639,21 @@
   .my-cropper-viewer image {
     position: absolute;
     z-index: 2;
+  }
+  .my-cropper-operate{
+    position: absolute;
+    bottom: 20rpx;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40rpx;
+    box-sizing: border-box;
+    &-item{
+      color: #fff;
+      &__disabled{
+        color: #ccc!important;
+      }
+    }
   }
 </style>
